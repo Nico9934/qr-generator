@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>QR Generator</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+    <div class="container">
+        <h2>Generador de QR con Logo</h2>
+
+        <input id="inputUrl" type="text" placeholder="Ingresá un link..." />
+
+        <div class="btn-row">
+            <button onclick="generateQR()">Generar</button>
+            <button onclick="copyLink()">Copiar Link</button>
+        </div>
+
+        <div id="qrContainer"></div>
+
+        <button class="download-btn" onclick="downloadQR()">Descargar QR</button>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/qr-code-styling/lib/qr-code-styling.js"></script>
+    <script src="script.js"></script>
+
+</body>
+
+</html>
