@@ -2,32 +2,156 @@
 <html lang="es">
 
 <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>QR Generator</title>
-    <link rel="stylesheet" href="style.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="theme-color" content="#6366f1">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <title>Somos Lola - Herramientas</title>
+    <link rel="stylesheet" href="styles.css">
 </head>
 
 <body>
-
     <div class="container">
-        <h2>Generador de QR con Logo</h2>
-
-        <input id="inputUrl" type="text" placeholder="Ingresá un link..." />
-
-        <div class="btn-row">
-            <button onclick="generateQR()">Generar</button>
-            <button onclick="copyLink()">Copiar Link</button>
+        <!-- Header with Logo -->
+        <div class="header">
+            <img src="https://res.cloudinary.com/dl2jw7fkm/image/upload/v1764911972/somoslola/products/bfvvbfvxnd6bfyicof2f.png"
+                alt="Logo" class="logo">
+            <h1>Herramientas Somos Lola</h1>
+            <p class="subtitle">Calculadora & Generador QR</p>
         </div>
 
-        <div id="qrContainer"></div>
+        <!-- Tab Navigation -->
+        <div class="tabs">
+            <button class="tab active" onclick="switchTab('calculadora')">
+                <span class="tab-icon">🧮</span>
+                <span>Calculadora</span>
+            </button>
+            <button class="tab" onclick="switchTab('historial')">
+                <span class="tab-icon">📋</span>
+                <span>Guardados</span>
+            </button>
+            <button class="tab" onclick="switchTab('qr')">
+                <span class="tab-icon">📱</span>
+                <span>Generar QR</span>
+            </button>
+        </div>
 
-        <button class="download-btn" onclick="downloadQR()">Descargar QR</button>
+        <!-- CALCULADORA TAB -->
+        <div id="calculadora-content" class="tab-content active">
+            <!-- Input Section -->
+            <div class="input-section">
+                <div class="input-group">
+                    <label for="precioBase">Precio Base (Efectivo)</label>
+                    <div class="input-wrapper">
+                        <span class="currency">$</span>
+                        <input type="number" id="precioBase" placeholder="19000" oninput="calcularDesdePrecioBase()"
+                            inputmode="numeric">
+                    </div>
+                </div>
+
+                <div class="separator">O calculá desde costo</div>
+
+                <div class="input-row">
+                    <div class="input-group">
+                        <label for="precioCosto">Precio Costo</label>
+                        <div class="input-wrapper">
+                            <span class="currency">$</span>
+                            <input type="number" id="precioCosto" placeholder="15000" oninput="calcularDesdeCosto()"
+                                inputmode="numeric">
+                        </div>
+                    </div>
+                    <div class="input-group">
+                        <label for="margen">Margen %</label>
+                        <div class="input-wrapper">
+                            <span class="currency">%</span>
+                            <input type="number" id="margen" placeholder="25" oninput="calcularDesdeCosto()"
+                                inputmode="numeric">
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Results Section -->
+            <div class="results">
+                <!-- Botón para guardar -->
+                <div class="save-section">
+                    <input type="text" id="tituloCalculo" placeholder="Nombre del producto..." class="title-input">
+                    <button class="btn-save" onclick="guardarCalculo()">💾 Guardar</button>
+                </div>
+
+                <div class="result-card blue">
+                    <div class="result-header">
+                        <span class="icon">💳</span>
+                        <span class="label">Precio Lista</span>
+                    </div>
+                    <div class="result-value" id="resLista">$0</div>
+                    <div class="result-note">+25% redondeado</div>
+                </div>
+
+                <div class="result-card green">
+                    <div class="result-header">
+                        <span class="icon">💵</span>
+                        <span class="label">Precio Efectivo</span>
+                    </div>
+                    <div class="result-value" id="resPromo">$0</div>
+                    <div class="result-note">20% OFF sobre lista</div>
+                </div>
+
+                <div class="result-card purple">
+                    <div class="result-header">
+                        <span class="icon">💰</span>
+                        <span class="label">3 Cuotas sin Interés</span>
+                    </div>
+                    <div class="result-value" id="resCuotas">$0</div>
+                    <div class="result-note">Precio lista / 3</div>
+                </div>
+
+                <div class="result-card orange">
+                    <div class="result-header">
+                        <span class="icon">🏦</span>
+                        <span class="label">Neto a recibir Mercado Pago</span>
+                    </div>
+                    <div class="result-value" id="resNeto">$0</div>
+                    <div class="result-note">76.53% del precio lista</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- HISTORIAL TAB -->
+        <div id="historial-content" class="tab-content">
+            <div class="historial-section">
+                <div class="historial-header">
+                    <h3>Cálculos Guardados</h3>
+                    <button class="btn-clear" onclick="limpiarHistorial()">🗑️ Limpiar todo</button>
+                </div>
+                <div id="listaHistorial" class="historial-list">
+                    <p class="empty-state">No hay cálculos guardados aún</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- QR GENERATOR TAB -->
+        <div id="qr-content" class="tab-content">
+            <div class="qr-section">
+                <label for="inputUrl">URL o Texto</label>
+                <input id="inputUrl" type="text" placeholder="Ingresá un link o texto..." class="qr-input" />
+
+                <div class="btn-row">
+                    <button class="btn-primary" onclick="generateQR()">Generar QR</button>
+                    <button class="btn-secondary" onclick="copyLink()">Copiar Link</button>
+                </div>
+
+                <div id="qrContainer"></div>
+
+                <button class="btn-download" onclick="downloadQR()" style="display: none;">
+                    ⬇️ Descargar QR
+                </button>
+            </div>
+        </div>
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/qr-code-styling/lib/qr-code-styling.js"></script>
     <script src="script.js"></script>
-
 </body>
 
 </html>
